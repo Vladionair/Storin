@@ -1,105 +1,134 @@
-import time
 from tkinter import *
-from Crypto import Random
-from Crypto.Cipher import AES
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_OAEP
+from tkinter import filedialog
+import time
+
 
 class Storin:
 
-    # инициализируем класс
     def __init__(self, master):
 
         self.balance = 0
         self.address = None
-        self.contracts = []
+        self.storage = ''
         self.date = 0
 
-        # задаем окно ввода пароля
         self.master = master
         self.master.title('Storin')
-        self.master.geometry('500x300+50+50')
+        self.master.geometry('500x300+300+200')
         self.master['bg'] = 'grey'
 
-        # задаем фрейм ввода пароля входа в программу
-        entr_pass_frame = Frame(self.master)
-        entr_pass_frame.place(relx=0.2, rely=0.4, relwidth=0.4, relheight=0.05)
+        self.entr_pass = Entry(width=30)
+        self.entr_pass.place(relx=0.20, rely=0.40, relwidth=0.40, relheight=0.07)
 
-        # задаем поле ввода пароля
-        self.entr_pass_field = Entry(entr_pass_frame, width=30)
-        self.entr_pass_field.place(relx=0, rely=0, relwidth=1, relheight=1)
+        entr_pass_button = Button(text='Enter', command=self.main_window_call)
+        entr_pass_button.place(relx=0.65, rely=0.40, relwidth=0.15, relheight=0.07)
 
-        # задаем кнопку ввода пароля
-        pass_button = Button(text='Enter', command=self.main_window_call)
-        pass_button.place(relx=0.65, rely=0.4, relwidth=0.15, relheight=0.05)
-
-    # задаем функцию вызова главного окна
     def main_window_call(self):
 
-        # задаем проверку пароля
-        if self.entr_pass_field.get() == '':
+        if self.entr_pass.get() == '':
             self.master.destroy()
 
-            # задаем главное окно
             main_window = Tk()
             main_window.title('Operations')
-            main_window.geometry('500x300+50+50')
+            main_window.geometry('500x300+300+200')
+            main_window['bg'] = 'grey'
 
-            # задаем кнопки переключения вкладок
-            get_file_button = Button(text='Get file', command=self.get_file_func)
-            get_file_button.place(relx=0, rely=0, relwidth=0.25, relheight=0.07)
+            get_file_button = Button(text='Get file', command=self.get_file)
+            get_file_button.place(relx=0.01, rely=0.02, relwidth=0.24, relheight=0.07)
 
-            give_file_button = Button(text='Give file', command=None)
-            give_file_button.place(relx=0.25, rely=0, relwidth=0.25, relheight=0.07)
+            give_file_button = Button(text='Give file', command=self.give_file)
+            give_file_button.place(relx=0.26, rely=0.02, relwidth=0.24, relheight=0.07)
 
             give_memory_button = Button(text='Give memory', command=None)
-            give_memory_button.place(relx=0.50, rely=0, relwidth=0.25, relheight=0.07)
+            give_memory_button.place(relx=0.51, rely=0.02, relwidth=0.24, relheight=0.07)
 
             exchange_button = Button(text='Exchange', command=None)
-            exchange_button.place(relx=0.75, rely=0, relwidth=0.25, relheight=0.07)
+            exchange_button.place(relx=0.76, rely=0.02, relwidth=0.23, relheight=0.07)
 
-            # задаем метку баланса
-            balance_window = Label(text=f'Balance : {self.balance}')
-            balance_window.place(relx=0.10, rely=0.93)
+            balance_window = Label(text=f'Balance : {self.balance}', bg='grey')
+            balance_window.place(relx=0.06, rely=0.93)
 
-            # задаем функцию обновления даты
             def update_date():
 
                 self.date = time.ctime()
-                date_window = Label(text=f'Date : {self.date}')
+                date_window = Label(text=f'Date : {self.date}', bg='grey')
                 date_window.place(relx=0.61, rely=0.93)
                 main_window.after(1000, update_date)
 
             update_date()
 
-            # задаем поле операций
-            self.operating_field = Frame()
-            self.operating_field.place(relx=0, rely=0.10, relwidth=1, relheight=0.83)
+    def get_file(self):
 
-    # задаем функцию вызова окна получения файла
-    def get_file_func(self):
+        try:
+            self.give_file_window.withdraw()
+            self.get_file_window.deiconify()
+            self.get_file_window.update()
+        except AttributeError:
+            self.get_file_window = Toplevel()
+            self.get_file_window.geometry('500x255+308+256')
+            self.get_file_window.overrideredirect(True)
+            self.get_file_window['bg'] = 'grey'
 
-        # задаем имена окон ввода
-        get_file_name = Label(self.operating_field, text='File name :')
-        get_file_name.place(relx=0.10, rely=0.05)
-        get_file_pass = Label(self.operating_field, text='Password :')
-        get_file_pass.place(relx=0.10, rely=0.15)
+            self.get_file_pass = Entry(self.get_file_window, width=25)
+            self.get_file_pass.place(relx=0.26, rely=0.02, relwidth=0.49, relheight=0.08)
 
-        # задаем окно ввода имени файла
-        self.get_file_name_field = Entry(self.operating_field, width=25)
-        self.get_file_name_field.place(relx=0.25, rely=0.05, relwidth=0.50, relheight=0.05)
+            get_file_find_button = Button(self.get_file_window, text='Find', command=self.get_file_find)
+            get_file_find_button.place(relx=0.01, rely=0.02, relwidth=0.24, relheight=0.08)
 
-        # задаем окно ввода пароля
-        self.get_file_pass_field = Entry(self.operating_field, width=25)
-        self.get_file_pass_field.place(relx=0.25, rely=0.15, relwidth=0.50, relheight=0.05)
+            get_file_open_button = Button(self.get_file_window, text='Open', command=None)
+            get_file_open_button.place(relx=0.76, rely=0.02, relwidth=0.23, relheight=0.08)
 
-        # задаем кнопку поиска файла в хранилище
-        get_file_button = Button(self.operating_field, text='Look', command=self.get_file_addresses)
-        get_file_button.place(relx=0.83, rely=0.15, relwidth=0.09, relheight=0.05)
+            result_frame = Frame(self.get_file_window)
+            result_frame.place(relx=0.01, rely=0.12, relwidth=0.98, relheight=0.86)
 
-    # задаем функцию поиска файла в хранилище
-    def get_file_addresses(self):
-        contract = self.get_file_name_field.get()
-        if contract in self.contracts:
-            if type(self.contracts) is list:
-                pass
+            scroll_result = Scrollbar(result_frame)
+            scroll_result.pack(side=RIGHT, fill=Y)
+
+            self.get_file_result = Text(result_frame, wrap=None, yscrollcommand=scroll_result.set)
+            self.get_file_result.pack(fill=BOTH)
+
+            scroll_result.config(command=self.get_file_result.yview)
+
+    def get_file_find(self):
+
+        try:
+            path = filedialog.askopenfilename()
+            with open(path, 'r') as file:
+                self.storage = file.read().encode()
+        except Exception:
+            pass
+
+    def get_file_open(self):
+
+        try:
+            if len(self.storage) > 0 and len(self.get_file_pass.get()) > 1:
+                key = self.get_file_pass.get()
+                frn = Fernet(key)
+                file = self.storage.encode()
+                data = frn.decrypt(file)
+                data = data.decode()
+                self.get_file_result.insert(1.0, data)
+        except Exception:
+            self.get_file_pass.delete(0, END)
+            self.get_file_pass.insert(0, 'Data is wrong!')
+
+    def give_file(self):
+        try:
+            self.get_file_window.withdraw()
+            self.give_file_window.deiconify()
+            self.give_file_window.update()
+        except Exception:
+            self.give_file_window = Toplevel()
+            self.give_file_window.geometry('500x255+308+256')
+            self.give_file_window.overrideredirect(True)
+            self.give_file_window['bg'] = 'grey'
+
+
+
+
+
+
+if __name__ == '__main__':
+    root = Tk()
+    run = Storin(root)
+    root.mainloop()
