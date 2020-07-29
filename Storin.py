@@ -3,7 +3,6 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
-
 class Storin:
 
     def __init__(self, master):
@@ -83,31 +82,37 @@ class Storin:
 
             # 2 notebook
             give_file_find_button = Button(give_file_tab, text='Find file', command=self.choosing)
-            give_file_find_button.place(relx=0.05, rely=0.10, relwidth=0.20, relheight=0.08)
+            give_file_find_button.place(relx=0.05, rely=0.07, relwidth=0.20, relheight=0.08)
 
             give_file_label_1 = Label(give_file_tab, text='Number of copies')
-            give_file_label_1.place(relx=0.05, rely=0.30)
+            give_file_label_1.place(relx=0.05, rely=0.24)
 
             give_file_label_2 = Label(give_file_tab, text='Number of days')
-            give_file_label_2.place(relx=0.05, rely=0.45)
+            give_file_label_2.place(relx=0.05, rely=0.39)
 
-            give_file_label_2 = Label(give_file_tab, text='Cost per copy')
-            give_file_label_2.place(relx=0.05, rely=0.60)
+            give_file_label_3 = Label(give_file_tab, text='Cost per copy')
+            give_file_label_3.place(relx=0.05, rely=0.54)
 
-            give_file_entry_1 = Entry(give_file_tab, width=10)
-            give_file_entry_1.place(relx=0.30, rely=0.30)
+            give_file_label_4 = Label(give_file_tab, text='Name')
+            give_file_label_4.place(relx=0.05, rely=0.69)
 
-            give_file_entry_1 = Entry(give_file_tab, width=10)
-            give_file_entry_1.place(relx=0.30, rely=0.45)
+            give_file_entry_1 = Entry(give_file_tab, width=20)
+            give_file_entry_1.place(relx=0.30, rely=0.24)
 
-            give_file_entry_1 = Entry(give_file_tab, width=10)
-            give_file_entry_1.place(relx=0.30, rely=0.60)
+            give_file_entry_2 = Entry(give_file_tab, width=20)
+            give_file_entry_2.place(relx=0.30, rely=0.39)
 
-            give_file_give_button = Button(give_file_tab, text='Give file', command=None)
-            give_file_give_button.place(relx=0.05, rely=0.80, relwidth=0.20, relheight=0.08)
+            give_file_entry_3 = Entry(give_file_tab, width=20)
+            give_file_entry_3.place(relx=0.30, rely=0.54)
+
+            give_file_entry_4 = Entry(give_file_tab, width=20)
+            give_file_entry_4.place(relx=0.30, rely=0.69)
+
+            give_file_send_button = Button(give_file_tab, text='Send file', command=None)
+            give_file_send_button.place(relx=0.30, rely=0.85, relwidth=0.25, relheight=0.08)
 
             give_file_list_frame = Frame(give_file_tab)
-            give_file_list_frame.place(relx=0.50, rely=0.05, relwidth=0.50, relheight=0.95)
+            give_file_list_frame.place(relx=0.60, rely=0.05, relwidth=0.40, relheight=0.95)
 
             scroll_give_file_list_x = Scrollbar(give_file_list_frame, orient=HORIZONTAL)
             scroll_give_file_list_x.pack(side=BOTTOM, fill=X)
@@ -120,6 +125,9 @@ class Storin:
 
             scroll_give_file_list_x.config(command=self.give_file_list.xview)
             scroll_give_file_list_y.config(command=self.give_file_list.yview)
+
+            # 3 notebook
+            
 
 
 
@@ -160,8 +168,6 @@ class Storin:
     def text_selection(self, e):
 
         self.menu.post(e.x_root, e.y_root)
-
-
 
 if __name__ == '__main__':
     root = Tk()
