@@ -1,6 +1,7 @@
-from tkinter import *
-from tkinter import filedialog
 import time
+from tkinter import *
+from tkinter import ttk
+from tkinter import filedialog
 
 
 class Storin:
@@ -11,10 +12,10 @@ class Storin:
         self.address = None
         self.storage = ''
         self.date = 0
-        self.master = master
-        self.master.title('Storin')
-        self.master.geometry('500x300+300+200')
-        self.master['bg'] = 'grey'
+        self.pass_window = master
+        self.pass_window.title('Storin')
+        self.pass_window.geometry('500x300+300+150')
+        self.pass_window['bg'] = 'grey'
         self.entr_pass = Entry(width=30)
         self.entr_pass.place(relx=0.20, rely=0.40, relwidth=0.40, relheight=0.07)
         entr_pass_button = Button(text='Enter', command=self.init_ui)
@@ -22,94 +23,117 @@ class Storin:
 
     def init_ui(self):
 
-        coords = self.master.wm_geometry()[self.master.wm_geometry().find('+'):]
+        coords = self.pass_window.wm_geometry()
 
         if self.entr_pass.get() == '':
-            self.master.destroy()
+            self.pass_window.destroy()
+
             self.main_window = Tk()
             self.main_window.title('Operations')
-            self.main_window.geometry(f'500x300{coords}')
-            self.main_window['bg'] = 'grey'
+            self.main_window.geometry(coords)
+            self.main_window.update()
 
-            get_file_button = Button(text='Get file', command=self.get_file)
-            get_file_button.place(relx=0.01, rely=0.02, relwidth=0.19, relheight=0.07)
-            give_file_button = Button(text='Give file', command=self.give_file)
-            give_file_button.place(relx=0.21, rely=0.02, relwidth=0.19, relheight=0.07)
-            give_memory_button = Button(text='Give memory', command=self.give_mem)
-            give_memory_button.place(relx=0.41, rely=0.02, relwidth=0.19, relheight=0.07)
-            exchange_button = Button(text='Exchange', command=self.exchange)
-            exchange_button.place(relx=0.61, rely=0.02, relwidth=0.19, relheight=0.07)
-            set_button = Button(text='Settings', command=self.settings)
-            set_button.place(relx=0.81, rely=0.02, relwidth=0.18, relheight=0.07)
-            balance_window = Label(text=f'Balance : {self.balance}', bg='grey')
-            balance_window.place(relx=0.06, rely=0.93)
+            notebook = ttk.Notebook(self.main_window)
+            notebook.place(relx=0, rely=0, relwidth=1, relheight=0.93)
+
+            get_file_tab = ttk.Frame(notebook)
+            give_file_tab = ttk.Frame(notebook)
+            give_mem_tab = ttk.Frame(notebook)
+            exchange_tab = ttk.Frame(notebook)
+            settings_tab = ttk.Frame(notebook)
+
+            notebook.add(get_file_tab, text='       Get file        ')
+            notebook.add(give_file_tab,text='       Give file       ')
+            notebook.add(give_mem_tab, text='       Give mem        ')
+            notebook.add(exchange_tab, text='       Exchange        ')
+            notebook.add(settings_tab, text='       Settings        ')
+
+            balance_window = Label(text=f'Balance : {self.balance}')
+            balance_window.place(relx=0.05, rely=0.93)
 
             def update_date():
 
                 self.date = time.ctime()
-                date_window = Label(text=f'Date : {self.date}', bg='grey')
+                date_window = Label(text=f'Date : {self.date}')
                 date_window.place(relx=0.61, rely=0.93)
                 self.main_window.after(1000, update_date)
 
             update_date()
 
-            self.get_file_window = Toplevel()
-            self.get_file_window.geometry(f'500x255{coords}')
-            self.get_file_window.overrideredirect(True)
-            self.get_file_window['bg'] = 'grey'
-            self.get_file_pass = Entry(self.get_file_window, width=25)
-            self.get_file_pass.place(relx=0.255, rely=0.02, relwidth=0.495, relheight=0.08)
-            get_file_find_button = Button(self.get_file_window, text='Find', command=self.get_file_find)
-            get_file_find_button.place(relx=0.01, rely=0.025, relwidth=0.24, relheight=0.08)
-            get_file_open_button = Button(self.get_file_window, text='Open', command=None)
-            get_file_open_button.place(relx=0.76, rely=0.025, relwidth=0.23, relheight=0.08)
-            result_frame = Frame(self.get_file_window)
-            result_frame.place(relx=0.01, rely=0.12, relwidth=0.98, relheight=0.87)
+            # 1 notebook
+            self.get_file_pass = Entry(get_file_tab, width=25)
+            self.get_file_pass.place(relx=0.25, rely=0.02, relwidth=0.50, relheight=0.08)
+
+            get_file_find_button = Button(get_file_tab, text='Find file', command=self.choosing)
+            get_file_find_button.place(relx=0.01, rely=0.02, relwidth=0.23, relheight=0.08)
+
+            get_file_open_button = Button(get_file_tab, text='Open File', command=self.get_file_open)
+            get_file_open_button.place(relx=0.76, rely=0.02, relwidth=0.23, relheight=0.08)
+
+            result_frame = Frame(get_file_tab)
+            result_frame.place(relx=0.01, rely=0.12, relwidth=0.98, relheight=0.86)
+
             scroll_result = Scrollbar(result_frame)
             scroll_result.pack(side=RIGHT, fill=Y)
+
             self.get_file_result = Text(result_frame, wrap=None, yscrollcommand=scroll_result.set)
             self.get_file_result.pack(fill=BOTH)
+
             scroll_result.config(command=self.get_file_result.yview)
-            self.get_file_window.withdraw()
 
-            self.give_file_window = Toplevel()
-            self.give_file_window.geometry(f'500x255{coords}')
-            self.give_file_window.overrideredirect(True)
-            self.give_file_window['bg'] = 'black'
-            self.give_file_window.withdraw()
+            # 2 notebook
+            give_file_find_button = Button(give_file_tab, text='Find file', command=self.choosing)
+            give_file_find_button.place(relx=0.05, rely=0.10, relwidth=0.20, relheight=0.08)
 
-            self.give_mem_window = Toplevel()
-            self.give_mem_window.geometry(f'500x255{coords}')
-            self.give_mem_window.overrideredirect(True)
-            self.give_mem_window['bg'] = 'green'
-            self.give_mem_window.withdraw()
+            give_file_label_1 = Label(give_file_tab, text='Number of copies')
+            give_file_label_1.place(relx=0.05, rely=0.30)
 
-            self.exchange_window = Toplevel()
-            self.exchange_window.geometry(f'500x255{coords}')
-            self.exchange_window.overrideredirect(True)
-            self.exchange_window['bg'] = 'blue'
-            self.exchange_window.withdraw()
+            give_file_label_2 = Label(give_file_tab, text='Number of days')
+            give_file_label_2.place(relx=0.05, rely=0.45)
 
-            self.set_window = Toplevel()
-            self.set_window.geometry(f'500x255{coords}')
-            self.set_window.overrideredirect(True)
-            self.set_window['bg'] = 'yellow'
-            self.set_window.withdraw()
+            give_file_label_2 = Label(give_file_tab, text='Cost per copy')
+            give_file_label_2.place(relx=0.05, rely=0.60)
 
-    def get_file(self):
+            give_file_entry_1 = Entry(give_file_tab, width=10)
+            give_file_entry_1.place(relx=0.30, rely=0.30)
 
-        coords = f'+{self.main_window.winfo_rootx()}+{(self.main_window.winfo_rooty()) + 26}'
+            give_file_entry_1 = Entry(give_file_tab, width=10)
+            give_file_entry_1.place(relx=0.30, rely=0.45)
 
-        self.get_file_window.withdraw()
-        self.give_file_window.withdraw()
-        self.give_mem_window.withdraw()
-        self.set_window.withdraw()
-        self.exchange_window.withdraw()
-        self.get_file_window.geometry(coords)
-        self.get_file_window.deiconify()
-        self.get_file_window.update()
+            give_file_entry_1 = Entry(give_file_tab, width=10)
+            give_file_entry_1.place(relx=0.30, rely=0.60)
 
-    def get_file_find(self):
+            give_file_give_button = Button(give_file_tab, text='Give file', command=None)
+            give_file_give_button.place(relx=0.05, rely=0.80, relwidth=0.20, relheight=0.08)
+
+            give_file_list_frame = Frame(give_file_tab)
+            give_file_list_frame.place(relx=0.50, rely=0.05, relwidth=0.50, relheight=0.95)
+
+            scroll_give_file_list_x = Scrollbar(give_file_list_frame, orient=HORIZONTAL)
+            scroll_give_file_list_x.pack(side=BOTTOM, fill=X)
+
+            scroll_give_file_list_y = Scrollbar(give_file_list_frame)
+            scroll_give_file_list_y.pack(side=RIGHT, fill=Y)
+
+            self.give_file_list = Listbox(give_file_list_frame, selectmode=EXTENDED, xscrollcommand=scroll_give_file_list_x.set, yscrollcommand=scroll_give_file_list_y.set)
+            self.give_file_list.pack(expand=True, fill=BOTH)
+
+            scroll_give_file_list_x.config(command=self.give_file_list.xview)
+            scroll_give_file_list_y.config(command=self.give_file_list.yview)
+
+
+
+
+            self.menu = Menu(tearoff=0)
+
+            self.menu.add_command(label='Cut', command=lambda: self.menu.focus_get().event_generate('<<Cut>>'))
+            self.menu.add_command(label='Copy', command=lambda: self.menu.focus_get().event_generate('<<Copy>>'))
+            self.menu.add_command(label='Paste', command=lambda: self.menu.focus_get().event_generate('<<Paste>>'))
+
+            self.get_file_pass.bind('<Button-3>', self.text_selection)
+            self.get_file_result.bind('<Button-3>', self.text_selection)
+
+    def choosing(self):
 
         try:
             path = filedialog.askopenfilename()
@@ -130,58 +154,16 @@ class Storin:
                 self.get_file_result.insert(1.0, data)
         except Exception:
             self.get_file_pass.delete(0, END)
+            self.storage = ''
             self.get_file_pass.insert(0, 'Data is wrong!')
 
-    def give_file(self):
+    def text_selection(self, e):
 
-        coords = f'+{self.main_window.winfo_rootx()}+{int(self.main_window.winfo_rooty()) + 26}'
+        self.menu.post(e.x_root, e.y_root)
 
-        self.get_file_window.withdraw()
-        self.give_mem_window.withdraw()
-        self.set_window.withdraw()
-        self.exchange_window.withdraw()
-        self.give_file_window.geometry(coords)
-        self.give_file_window.deiconify()
-        self.give_file_window.update()
 
-    def give_mem(self):
-
-        coords = f'+{self.main_window.winfo_rootx()}+{int(self.main_window.winfo_rooty()) + 26}'
-
-        self.get_file_window.withdraw()
-        self.give_file_window.withdraw()
-        self.set_window.withdraw()
-        self.exchange_window.withdraw()
-        self.give_mem_window.geometry(coords)
-        self.give_mem_window.deiconify()
-        self.give_mem_window.update()
-
-    def exchange(self):
-
-        coords = f'+{self.main_window.winfo_rootx()}+{int(self.main_window.winfo_rooty()) + 26}'
-
-        self.get_file_window.withdraw()
-        self.give_file_window.withdraw()
-        self.give_mem_window.withdraw()
-        self.set_window.withdraw()
-        self.exchange_window.geometry(coords)
-        self.exchange_window.deiconify()
-        self.exchange_window.update()
-
-    def settings(self):
-
-        coords = f'+{self.main_window.winfo_rootx()}+{int(self.main_window.winfo_rooty()) + 26}'
-
-        self.get_file_window.withdraw()
-        self.give_file_window.withdraw()
-        self.give_mem_window.withdraw()
-        self.exchange_window.withdraw()
-        self.set_window.geometry(coords)
-        self.set_window.deiconify()
-        self.set_window.update()
 
 if __name__ == '__main__':
     root = Tk()
     run = Storin(root)
     root.mainloop()
-
