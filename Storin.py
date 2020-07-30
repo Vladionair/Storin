@@ -3,10 +3,12 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
+
 class Storin:
 
     def __init__(self, master):
 
+        self.password = ''
         self.balance = 0
         self.address = None
         self.storage = ''
@@ -15,8 +17,8 @@ class Storin:
         self.pass_window.title('Storin')
         self.pass_window.geometry('500x300+300+150')
         self.pass_window['bg'] = 'grey'
-        self.entr_pass = Entry(width=30)
-        self.entr_pass.place(relx=0.20, rely=0.40, relwidth=0.40, relheight=0.07)
+        self.enter_pass = Entry(width=30)
+        self.enter_pass.place(relx=0.20, rely=0.40, relwidth=0.40, relheight=0.07)
         entr_pass_button = Button(text='Enter', command=self.init_ui)
         entr_pass_button.place(relx=0.65, rely=0.40, relwidth=0.15, relheight=0.07)
 
@@ -24,7 +26,7 @@ class Storin:
 
         coords = self.pass_window.wm_geometry()
 
-        if self.entr_pass.get() == '':
+        if self.enter_pass.get() == self.password:
             self.pass_window.destroy()
 
             self.main_window = Tk()
@@ -43,7 +45,7 @@ class Storin:
 
             notebook.add(get_file_tab, text='       Get file        ')
             notebook.add(give_file_tab,text='       Give file       ')
-            notebook.add(give_mem_tab, text='       Give mem        ')
+            notebook.add(give_mem_tab, text='       Give memory    ')
             notebook.add(exchange_tab, text='       Exchange        ')
             notebook.add(settings_tab, text='       Settings        ')
 
@@ -51,7 +53,6 @@ class Storin:
             balance_window.place(relx=0.05, rely=0.93)
 
             def update_date():
-
                 self.date = time.ctime()
                 date_window = Label(text=f'Date : {self.date}')
                 date_window.place(relx=0.61, rely=0.93)
@@ -66,7 +67,7 @@ class Storin:
             get_file_find_button = Button(get_file_tab, text='Find file', command=self.choosing)
             get_file_find_button.place(relx=0.01, rely=0.02, relwidth=0.23, relheight=0.08)
 
-            get_file_open_button = Button(get_file_tab, text='Open File', command=self.get_file_open)
+            get_file_open_button = Button(get_file_tab, text='Open file', command=self.get_file_open)
             get_file_open_button.place(relx=0.76, rely=0.02, relwidth=0.23, relheight=0.08)
 
             result_frame = Frame(get_file_tab)
@@ -84,29 +85,29 @@ class Storin:
             give_file_find_button = Button(give_file_tab, text='Find file', command=self.choosing)
             give_file_find_button.place(relx=0.05, rely=0.07, relwidth=0.20, relheight=0.08)
 
-            give_file_label_1 = Label(give_file_tab, text='Number of copies')
-            give_file_label_1.place(relx=0.05, rely=0.24)
+            num_copies_label = Label(give_file_tab, text='Number of copies')
+            num_copies_label.place(relx=0.05, rely=0.24)
 
-            give_file_label_2 = Label(give_file_tab, text='Number of days')
-            give_file_label_2.place(relx=0.05, rely=0.39)
+            num_days_label = Label(give_file_tab, text='Number of days')
+            num_days_label.place(relx=0.05, rely=0.39)
 
-            give_file_label_3 = Label(give_file_tab, text='Cost per copy')
-            give_file_label_3.place(relx=0.05, rely=0.54)
+            cost_per_copy_label = Label(give_file_tab, text='Cost per copy')
+            cost_per_copy_label.place(relx=0.05, rely=0.54)
 
-            give_file_label_4 = Label(give_file_tab, text='Name')
-            give_file_label_4.place(relx=0.05, rely=0.69)
+            give_file_name_label = Label(give_file_tab, text='Name')
+            give_file_name_label.place(relx=0.05, rely=0.69)
 
-            give_file_entry_1 = Entry(give_file_tab, width=20)
-            give_file_entry_1.place(relx=0.30, rely=0.24)
+            num_copies_entry = Entry(give_file_tab, width=20)
+            num_copies_entry.place(relx=0.30, rely=0.24)
 
-            give_file_entry_2 = Entry(give_file_tab, width=20)
-            give_file_entry_2.place(relx=0.30, rely=0.39)
+            num_days_entry = Entry(give_file_tab, width=20)
+            num_days_entry.place(relx=0.30, rely=0.39)
 
-            give_file_entry_3 = Entry(give_file_tab, width=20)
-            give_file_entry_3.place(relx=0.30, rely=0.54)
+            cost_per_copy_entry = Entry(give_file_tab, width=20)
+            cost_per_copy_entry.place(relx=0.30, rely=0.54)
 
-            give_file_entry_4 = Entry(give_file_tab, width=20)
-            give_file_entry_4.place(relx=0.30, rely=0.69)
+            give_file_name_entry = Entry(give_file_tab, width=20)
+            give_file_name_entry.place(relx=0.30, rely=0.69)
 
             give_file_send_button = Button(give_file_tab, text='Send file', command=None)
             give_file_send_button.place(relx=0.30, rely=0.85, relwidth=0.25, relheight=0.08)
@@ -120,16 +121,38 @@ class Storin:
             scroll_give_file_list_y = Scrollbar(give_file_list_frame)
             scroll_give_file_list_y.pack(side=RIGHT, fill=Y)
 
-            self.give_file_list = Listbox(give_file_list_frame, selectmode=EXTENDED, xscrollcommand=scroll_give_file_list_x.set, yscrollcommand=scroll_give_file_list_y.set)
+            self.give_file_list = Listbox(give_file_list_frame, selectmode=EXTENDED,
+                                          xscrollcommand=scroll_give_file_list_x.set,
+                                          yscrollcommand=scroll_give_file_list_y.set)
             self.give_file_list.pack(expand=True, fill=BOTH)
 
             scroll_give_file_list_x.config(command=self.give_file_list.xview)
             scroll_give_file_list_y.config(command=self.give_file_list.yview)
 
-            # 3 notebook
-            
+            # 5 notebook
+            enter_pass_label = Label(settings_tab, text='Enter new password')
+            enter_pass_label.place(relx=0.05, rely=0.10)
 
+            repeat_pass_label = Label(settings_tab, text='Repeat new password')
+            repeat_pass_label.place(relx=0.05, rely=0.25)
 
+            self.enter_pass_entry = Entry(settings_tab, width=25)
+            self.enter_pass_entry.place(relx=0.35, rely=0.10)
+
+            self.repeat_pass_entry = Entry(settings_tab, width=25)
+            self.repeat_pass_entry.place(relx=0.35, rely=0.25)
+
+            confirm_pass_button = Button(settings_tab, text='Confirm password', command=self.enter_pass_confirming)
+            confirm_pass_button.place(relx=0.71, rely=0.25, relwidth=0.25, relheight=0.08)
+
+            address_label = Label(settings_tab, text='Enter address')
+            address_label.place(relx=0.05, rely=0.40)
+
+            self.address_entry = Entry(settings_tab, width=25)
+            self.address_entry.place(relx=0.35, rely=0.40)
+
+            confirm_address_button = Button(settings_tab, text='Confirm address', command=self.address_confirming)
+            confirm_address_button.place(relx=0.71, rely=0.40, relwidth=0.25, relheight=0.08)
 
 
             self.menu = Menu(tearoff=0)
@@ -140,6 +163,10 @@ class Storin:
 
             self.get_file_pass.bind('<Button-3>', self.text_selection)
             self.get_file_result.bind('<Button-3>', self.text_selection)
+            self.address_entry.bind('<Button-3>', self.text_selection)
+            self.enter_pass_entry.bind('<Button-3>', self.text_selection)
+            self.repeat_pass_entry.bind('<Button-3>', self.text_selection)
+
 
     def choosing(self):
 
@@ -168,6 +195,21 @@ class Storin:
     def text_selection(self, e):
 
         self.menu.post(e.x_root, e.y_root)
+
+    def address_confirming(self):
+
+        if len(self.address_entry.get()) > 0:
+            self.address = self.address_entry.get()
+            self.address_entry.delete(0, END)
+
+    def enter_pass_confirming(self):
+
+        if self.enter_pass_entry.get() == self.repeat_pass_entry.get():
+            self.password = self.repeat_pass_entry.get()
+            self.enter_pass_entry.delete(0, END)
+            self.repeat_pass_entry.delete(0, END)
+
+
 
 if __name__ == '__main__':
     root = Tk()
